@@ -1,0 +1,99 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Insert Categories";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POST Request Form</title>
+</head>
+<body>
+    <h1>POST Request Form</h1>
+    <form id="postForm">
+        <label for="categoryName">Category Name:</label>
+        <input type="text" id="categoryName" name="categoryName">
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById("postForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
+            var formData = new FormData(this);
+            var categoryName = formData.get("categoryName");
+            var apiUrl = "https://localhost:7130/categories?name=" + encodeURIComponent(categoryName);
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    // You may need to adjust other headers as per your requirements
+                },
+                body: '' // Add any body data here if needed
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Assuming the response is JSON
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    // Handle success response here
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle error here
+                });
+        });
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELETE Request Page</title>
+</head>
+<body>
+    <h1>Delete Request Form</h1>
+    <label for="categoryId">Category ID:</label>
+    <input type="number" id="categoryId" name="categoryId">
+    <button onclick="sendDeleteRequest()">Delete Category</button>
+
+    <script>
+        function sendDeleteRequest() {
+            var categoryId = document.getElementById("categoryId").value;
+            var apiUrl = "https://localhost:7130/categories?id=" + encodeURIComponent(categoryId);
+
+            fetch(apiUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': '*/*',
+                    // You may need to adjust other headers as per your requirements
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Assuming the response is JSON
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    // Handle success response here
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle error here
+                });
+        }
+    </script>
+</body>
+</html>
