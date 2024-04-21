@@ -10,43 +10,37 @@
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display Data from API</title>
+    <title>API Consumer</title>
 </head>
 <body>
-    <h1>Data from API</h1>
-    <div id="dataContainer"></div>
+    <h1>Items from API</h1>
+    <div id="itemsContainer"></div>
 
     <script>
-        // Function to fetch data from API
-        function fetchData() {
-            fetch('https://localhost:7130/categories')
-                .then(response => response.json())
-                .then(data => {
-                    // Display data on HTML page
-                    const dataContainer = document.getElementById('dataContainer');
-                    data.forEach(item => {
-                        const listItem = document.createElement('div');
-                        listItem.innerHTML = `<strong>ID:</strong> ${item.id}<br>
-                                                      <strong>Name:</strong> ${item.name}<br>
-                                                      <strong>Description:</strong> ${item.description}<br><br>`;
-                        dataContainer.appendChild(listItem);
-                    });
-                })
-                .catch(error => {
-                    // Handle errors
-                    console.error('Error fetching data:', error);
-                    const errorContainer = document.getElementById('dataContainer');
-                    errorContainer.textContent = 'Error fetching data. Please try again later.';
+        // Fetch data from the API
+        fetch('https://localhost:7130/Machines')
+            .then(response => response.json())
+            .then(data => {
+                // Handle the data
+                const itemsContainer = document.getElementById('itemsContainer');
+                data.forEach(item => {
+                    // Create HTML elements for each item
+                    const itemElement = document.createElement('div');
+                    itemElement.innerHTML = `
+                    <p><strong>Machine Name</strong><h2>${item.name}</h2></p>
+                    <p><strong>Machine Description:</strong> ${item.description}</p>
+                    <p><strong>Category NAME:</strong> ${item.category.name}</p>
+                  `;
+                    itemsContainer.appendChild(itemElement);
                 });
-        }
-
-        // Call fetchData function when the page loads
-        window.onload = fetchData;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     </script>
 </body>
 </html>

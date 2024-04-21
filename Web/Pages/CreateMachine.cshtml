@@ -10,44 +10,78 @@
 
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display Data from API</title>
+    <title>API Consumer</title>
 </head>
 <body>
-    <h1>Data from API</h1>
-    <div id="dataContainer"></div>
+    <h1>API Consumer</h1>
+
+    <!-- Form to input data -->
+    <form id="dataForm">
+@*         <label for="id">ID:</label>
+        <input type="number" id="id" name="id" required><br><br> *@
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required><br><br>
+
+        <label for="categoryId">Category ID:</label>
+        <input type="number" id="categoryId" name="categoryId" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="output"></div>
 
     <script>
-        // Function to fetch data from API
-        function fetchData() {
-            fetch('https://localhost:7130/categories')
-                .then(response => response.json())
-                .then(data => {
-                    // Display data on HTML page
-                    const dataContainer = document.getElementById('dataContainer');
-                    data.forEach(item => {
-                        const listItem = document.createElement('div');
-                        listItem.innerHTML = `<strong>ID:</strong> ${item.id}<br>
-                                                      <strong>Name:</strong> ${item.name}<br>
-                                                      <strong>Description:</strong> ${item.description}<br><br>`;
-                        dataContainer.appendChild(listItem);
-                    });
-                })
-                .catch(error => {
-                    // Handle errors
-                    console.error('Error fetching data:', error);
-                    const errorContainer = document.getElementById('dataContainer');
-                    errorContainer.textContent = 'Error fetching data. Please try again later.';
+        // Function to send data to the API
+        async function sendData(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const formData = new FormData(document.getElementById('dataForm'));
+
+            const postData = {
+                //id: parseInt(formData.get('id')),
+                name: formData.get('name'),
+                description: formData.get('description'),
+                category: {
+                    id: parseInt(formData.get('categoryId')),
+                    name:''
+                }
+            };
+
+            try {
+                const response = await fetch('https://localhost:7130/Machines', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData)
                 });
+
+                const data = await response.json();
+
+                // Display the response from the API
+                displayResponse(data);
+            } catch (error) {
+                console.error('Error sending data:', error);
+            }
         }
 
-        // Call fetchData function when the page loads
-        window.onload = fetchData;
+        // Function to display the response from the API
+        function displayResponse(responseData) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `<p>Response from API:</p><pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+        }
+
+        // Attach event listener to the form submission
+        document.getElementById('dataForm').addEventListener('submit', sendData);
     </script>
 </body>
 </html>
